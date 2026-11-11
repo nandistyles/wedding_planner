@@ -112,6 +112,21 @@ The anon key is meant to be public; the database's access rules are what protect
 
 Sign in, open the wedding, and go to **Team → Add person** for each committee member. Choose their committee and their access level, then send them the site link. They sign in with the email you added.
 
+## Share links (no sign-in)
+
+While sign-in emails aren't set up, a wedding can have a secret link: `https://your-site/?share=<key>`. Anyone with the link can view the wedding and edit tasks, meetings, committee updates and the food list, without signing in. Wedding details, committees and people stay with signed-in planners. Treat the link like a password: anyone who gets it can edit.
+
+Run these in the Supabase SQL Editor (after `supabase/migrations/20261111120000_share_links.sql`):
+
+```sql
+-- turn on (or replace) a wedding's link; copy the share_key it returns
+update public.weddings set share_key = replace(gen_random_uuid()::text, '-', '')
+where couple_names = 'Mercy & Garikai' returning share_key;
+
+-- turn it off
+update public.weddings set share_key = null where couple_names = 'Mercy & Garikai';
+```
+
 ## Access levels
 
 | | View only | Member | Planner | App admin |

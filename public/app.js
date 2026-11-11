@@ -26,7 +26,14 @@ if (!CFG.SUPABASE_URL || !CFG.SUPABASE_ANON_KEY || !window.supabase) {
     For local testing, copy <code>public/config.example.js</code> to <code>public/config.js</code> and fill it in.</p></div>`;
   throw new Error("Missing APP_CONFIG");
 }
-const sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY);
+/* A share link (?share=<key>) opens one wedding without signing in. The key
+   goes to Supabase in a header; the database decides what it unlocks
+   (see supabase/migrations/20261111120000_share_links.sql). */
+const SHARE_KEY = new URLSearchParams(location.search).get("share") || "";
+const sb = window.supabase.createClient(CFG.SUPABASE_URL, CFG.SUPABASE_ANON_KEY, SHARE_KEY ? {
+  global: { headers: { "x-share-key": SHARE_KEY } },
+  auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+} : {});
 
 /* ================= helpers ================= */
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
@@ -42,7 +49,7 @@ const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
 const statusCls = s => s === "Done" ? "done" : s === "In progress" ? "prog" : "";
 const isLate = t => t.due_date && t.status !== "Done" && t.due_date < todayISO();
 const cName = id => S.committees.find(c => c.id === id)?.name || "No committee";
-const nameOf = email => S.members.find(m => m.email === email)?.name || email || "";
+const nameOf = email => email === "" ? "someone with the share link" : S.members.find(m => m.email === email)?.name || email || "";
 const myName = () => nameOf(S.email);
 const canWrite = () => S.role === "planner" || S.role === "member";
 const isPlanner = () => S.role === "planner";
@@ -108,7 +115,9 @@ function renderHeader() {
   $("countBox").classList.toggle("hide", !w);
   $("who").classList.toggle("hide", !S.session);
   const roleLabel = { planner: "planner", member: "committee member", viewer: "view only" }[S.role];
-  $("whoName").textContent = S.session ? `Signed in as ${w ? myName() : S.email}${w && roleLabel ? ` (${roleLabel})` : ""}` : "";
+  $("whoName").textContent = SHARE_KEY ? "Shared link: anyone with this link can view and edit"
+    : S.session ? `Signed in as ${w ? myName() : S.email}${w && roleLabel ? ` (${roleLabel})` : ""}` : "";
+  $("signOut").classList.toggle("hide", !!SHARE_KEY);
   $("switchWedding").classList.toggle("hide", !(w && (S.weddings.length > 1 || S.isAppAdmin)));
   $("tabs").classList.toggle("hide", !w);
 }
@@ -195,7 +204,22 @@ async function openWedding(id) {
   if (!location.hash || location.hash === "#weddings") location.hash = "#today"; else route();
 }
 
+async function startShared() {
+  S.session = { shared: true }; S.email = ""; S.isAppAdmin = false;
+  const { data, error } = await sb.from("weddings").select("*");
+  if (error) return toast(error.message, true);
+  if (!data.length) {
+    app.innerHTML = `<div class="signin card"><h2>This link doesn't work</h2>
+      <p>It may have been turned off or copied incompletely. Ask the planner for the current link.</p></div>`;
+    return;
+  }
+  S.weddings = data;
+  S.myRoles = { [data[0].id]: "member" };
+  openWedding(data[0].id);
+}
+
 async function start(session) {
+  if (SHARE_KEY) return startShared();
   S.session = session;
   S.email = session?.user?.email?.toLowerCase() || "";
   if (!session) return renderSignIn();
