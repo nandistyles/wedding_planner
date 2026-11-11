@@ -1,0 +1,9 @@
+# Written at build time from environment variables – never commit keys
+public/config.js
+.env
+.env.*
+!.env.example
+node_modules/
+.vercel/
+.DS_Store
+supabase/.temp/
