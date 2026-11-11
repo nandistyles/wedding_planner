@@ -14,6 +14,11 @@ It's a static site (plain HTML, CSS and JavaScript, no build tools) hosted on **
   4. **Action points**: each one has an owner and a due date. It goes on the checklist automatically and comes back under matters arising at every meeting until it's done.
 
   Past meetings without final minutes are flagged as **Minutes outstanding**, on the meeting and on the Today page. **Share minutes** formats the whole meeting as a WhatsApp message (copy, send on WhatsApp, or share), or prints it with signature lines. You can also save it as a PDF.
+- **Dashboard**: countdown, checklist progress, budget paid vs owed, guests confirmed against the venue's seats, vendors booked, next meeting, what needs attention, and venue notes.
+- **Main budget**: every line from the planner workbook by category: provider, contact, cost, deposit, amount paid, balance, pledges and status. The groceries line takes the Food list total and contingency is 10% of everything else, both worked out automatically. Optionally shows what each item cost at a previous wedding.
+- **Guest list**: side, relationship, phone, reply, number of people, parking and seating, with confirmed people against the venue's seats and cars expected. Paste a whole list of names at once with **Add many**.
+- **Vendors**: every service you need a phone number for on the day: who's booked, arrival time, and a tick when they've confirmed a week before. Share the list on WhatsApp.
+- **Day schedule**: the day before and the wedding day, by time. Share it on WhatsApp or print it for vendors.
 - **Food budget**: the caterer's list by group. Tick items as they're bought; totals update.
 - **Team**: wedding details, committees, and who can sign in (planner, member or view only).
 - **Many weddings**: a wedding list, a template for new weddings, archiving, JSON backups, and turning a finished wedding into the template for the next one.
