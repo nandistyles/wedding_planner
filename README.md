@@ -23,7 +23,7 @@ It's a static site (plain HTML, CSS and JavaScript, no build tools) hosted on **
 - **Team**: wedding details, committees, and who can sign in (planner, member or view only).
 - **Many weddings**: a wedding list, a template for new weddings, archiving, JSON backups, and turning a finished wedding into the template for the next one.
 
-Sign-in uses a 6-digit code sent by email, so nobody needs a password. Only people added to a wedding can see it. This is enforced by the database itself (row level security), not just by the app.
+Sign-in uses a code sent by email, so nobody needs a password. Only people added to a wedding can see it. This is enforced by the database itself (row level security), not just by the app.
 
 ## What's in this repository
 
@@ -187,7 +187,7 @@ Don't edit the existing migration file once it has been run. Put changes in a ne
 |---|---|
 | "The app isn't connected to its database yet" | The Vercel environment variables are missing. Add them, then redeploy. |
 | Sign-in email never arrives | Check spam. If many people requested codes, you've hit Supabase's email limit; wait an hour or set up SMTP (step 4.4). |
-| Email link opens a blank or signed-out page | Type the 6-digit code instead, and check the Redirect URLs (step 4.1). |
+| Email link opens a blank or signed-out page | Type the code from the email instead, and check the Redirect URLs (step 4.1). |
 | Signed in but "isn't on any wedding team" | That exact email hasn't been added under Team, or was typed differently. |
 | "new row violates row-level security policy" | The person is view only, or isn't on that wedding's team. |
 | Can't see the New wedding button | Your email isn't in `app_admins` (step 2). |

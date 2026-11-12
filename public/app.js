@@ -237,7 +237,7 @@ function renderSignIn(step = "email", email = "") {
   app.innerHTML = `<div class="signin card stack">
     <h2>Sign in</h2>
     ${step === "email" ? `
-      <p class="muted small">Use the email address the planner added for you. We'll email you a 6-digit code.</p>
+      <p class="muted small">Use the email address the planner added for you. We'll email you a sign-in code.</p>
       <form id="emailForm"><label for="em">Email</label>
         <input id="em" name="email" type="email" autocomplete="email" required value="${esc(email)}">
         <div class="actions"><button class="btn">Email me a code</button></div></form>` : `
